@@ -7,13 +7,14 @@ import time
 
 # --- INITIAL CONFIGURATION ---
 load_dotenv()
-#api_key = os.getenv("GEMINI_API_KEY")
 
+# API Key fix (Ensuring consistent variable name)
+#api_key = os.getenv("GEMINI_API_KEY")
 if "GEMINI_API_KEY" in st.secrets:
-   api_key=st.secrets["GEMINI_API_KEY"]
+   api_key = st.secrets["GEMINI_API_KEY"]
 else:
-  api_Key=st.secrets("GEMINI_API_KEY")
- 
+   api_key = os.getenv("GEMINI_API_KEY")
+
 genai.configure(api_key=api_key)
 
 FILE_NAME = "chat_memory.json"
@@ -29,16 +30,18 @@ def load_data():
 def save_data(chat_history):
     new_memory = []
     for message in chat_history:
+        # Gemini history se text nikalne ka sahi treeka
         message_text = message.parts[0].text
         new_memory.append({
             "role": message.role,
             "parts": [{"text": message_text}]
         })
+    # FIX: variable name 'dairy' ko open aur dump dono mein same rakha hai
     with open(FILE_NAME, "w") as dairy:
         json.dump(new_memory, dairy, indent=4)
 
 # --- INSTRUCTIONS ---
-instruction = """ Role & Persona
+instruction = """Role & Persona
 You are a highly intelligent, empathetic, and resource-conscious AI Food Assistant. Your primary goal is to help users manage their kitchen efficiently, minimize food waste, stay within budget, and provide delicious, safe recipes tailored to their specific needs.
 
 Core Responsibilities
@@ -107,18 +110,16 @@ if "chat_session" not in st.session_state:
     st.session_state.memory = load_data()
     st.session_state.chat_session = st.session_state.model.start_chat(history=st.session_state.memory)
 
-# --- SIDEBAR WITH 2 BUTTONS ---
+# --- SIDEBAR ---
 with st.sidebar:
     st.markdown("## 👨‍🍳 **Food Agent AI**")
     st.markdown(f"### Developed by: \n**Aiman Fatima**")
     st.divider()
 
-    # BUTTON 1: Clear Interface Only
     if st.button("🗑️ Clear Chat Window"):
         st.session_state.chat_session = st.session_state.model.start_chat(history=st.session_state.memory)
         st.rerun()
 
-    # BUTTON 2: Clear File History (Memory)
     if st.button("⚠️ Clear All History"):
         with open(FILE_NAME, "w") as f:
             json.dump([], f)
@@ -132,7 +133,7 @@ st.title("🥗 Smart Food Assistant")
 st.caption("I help you cook with what you have & manage your budget.")
 
 for message in st.session_state.chat_session.history:
-    role = "user" if message.role == "user" else "assistant"
+    role = "user" if message.role == "user" else "model" # Gemini internal role 'model' hota hai
     avatar = "👤" if role == "user" else "🤖"
     with st.chat_message(role, avatar=avatar):
         st.markdown(message.parts[0].text)
@@ -146,8 +147,9 @@ if user_input := st.chat_input("Ask me anything about food..."):
             response = st.session_state.chat_session.send_message(user_input)
             status.update(label="Response Ready!", state="complete", expanded=False)
         st.markdown(response.text)
-        
-    save_data(st.session_state.chat_session.history)
     
+    # Ye line history save karegi har message ke baad
+    save_data(st.session_state.chat_session.history)
+
     if user_input.lower() in ['exit', 'bye']:
         st.info("Progress saved. You can close the tab now!")
