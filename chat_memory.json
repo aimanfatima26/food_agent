@@ -1,1 +1,34 @@
-[]
+[
+    {
+        "role": "user",
+        "parts": [
+            {
+                "text": "hey mujhy koi asan sy recipe batao mery budget ky mutabik 500 main"
+            }
+        ]
+    },
+    {
+        "role": "model",
+        "parts": [
+            {
+                "text": "Assalam-o-Alaikum! Zaroor, mein aap ki madad kar sakti hoon. Aap ko kis tarah ki recipe chahiye? Koi khaas ingredient hai jo aap istemaal karna chahti hain ya kuch jo aap nahi khana chahti hain?\n\nApne budget ko zehn mein rakhte hue, hum kuch mazedar aur asaan bana sakte hain. Batayein kya khana pasand karengi?"
+            }
+        ]
+    },
+    {
+        "role": "user",
+        "parts": [
+            {
+                "text": "no tum bus budget ku mutabik bana do kuch bhi"
+            }
+        ]
+    },
+    {
+        "role": "model",
+        "parts": [
+            {
+                "text": "Theek hai, mein aap ke 500 PKR ke budget mein aik mazedar aur asaan recipe bata'ti hoon. Mein yeh samjh rahi hoon ke aap ko koi allergy ya pasand na karne wali cheez nahi hai.\n\n### \ud83e\udd57 Anda Bhurji (Scrambled Eggs with Spices)\n**Description:** Yeh aik fori, bharpoor aur mazedar dish hai jo kam kharch mein tayyar ho jati hai. Yeh nashte, dopahar ya raat ke khane ke liye behtareen hai.\n\n### \ud83d\udcdd Ingredients Table\n| Ingredient | Quantity | Estimated Price | Status / Note |\n| :--- | :--- | :--- | :--- |\n| Anda (Eggs) | 3-4 | 70-100 PKR | |\n| Pyaaz (Onion) | 1 medium | 20 PKR | |\n| Tamatar (Tomato) | 1 medium | 20 PKR | |\n| Hari Mirch (Green Chili) | 1-2 (hasb-e-zarurat) | 10 PKR | |\n| Adrak Lehsun Paste (Ginger Garlic Paste) | 1 tsp | 10 PKR | |\n| Zeera (Cumin Seeds) | 1/2 tsp | 5 PKR | |\n| Lal Mirch Powder (Red Chili Powder) | 1/2 tsp | 5 PKR | |\n| Haldi Powder (Turmeric Powder) | 1/4 tsp | 2 PKR | |\n| Dhaniya Powder (Coriander Powder) | 1/2 tsp | 5 PKR | |\n| Namak (Salt) | Hasb-e-zarurat | 2 PKR | |\n| Tail (Oil) | 2-3 tbsp | 20 PKR | |\n| Hara Dhaniya (Coriander Leaves) | 2 tbsp (optional) | 10 PKR | |\n| Roti / Paratha (for serving) | 2-3 | 150 PKR | (Agar ghar mein mojood na ho) |\n| **Kul Tadbeer ka Kharch:** | | **~250-300 PKR** | **(Agar roti/paratha shamil ho)** |\n\n### \ud83d\udc69\u200d\ud83c\udf73 Step-by-Step Instructions\n1.  Pyaaz, tamatar aur hari mirch ko bareek kaat lein. Hara dhaniya bhi kaat lein agar istemaal kar rahe hain.\n2.  Aik pan mein tail garam karein aur phir us mein zeera dal kar halka sa bhunein.\n3.  Ab bareek kata hua pyaaz dal kar gulabi hone tak bhunein.\n4.  Adrak lehsun paste dal kar aik minute ke liye bhunein.\n5.  Kata hua tamatar aur hari mirch dal dein aur tamatar ke naram hone tak pakayein.\n6.  Lal mirch powder, haldi powder, dhaniya powder aur namak dal kar ache tarah milayein aur 2 minute tak masalon ko bhunein.\n7.  Anday phaint kar masale mein dal dein aur lagatar hilate hue pakayein jab tak anday khushk na ho jayein aur bhurji ki shakal ikhtiyar kar lein.\n8.  Agar hara dhaniya istemaal kar rahe hain to woh upar se chirak dein.\n9.  Garam garam anda bhurji ko roti ya parathay ke sath pesh karein.\n\n### \ud83d\udcb0 Budget & Waste Summary\n*   **Total Estimated Cost:** ~300 PKR (Roti/Paratha ke sath)\n*   **Inventory Used:** Yahan koi kharab hone wali cheez istemaal nahi hui hai. Yeh recipe taqreeban tamaam gharon mein mojood aam ajzaa se ban jati hai.\n\nAgar aap ko yeh recipe pasand hai ya aap kuch aur chahti hain to batayein!"
+            }
+        ]
+    }
+]
