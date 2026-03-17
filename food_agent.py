@@ -7,7 +7,11 @@ import time
 
 # --- INITIAL CONFIGURATION ---
 load_dotenv()
-api_Key = os.getenv("GEMINI_API_KEY")
+#api_Key = os.getenv("GEMINI_API_KEY")
+if "GEMINI_API_KEY" in st.secrets:
+    api_key=st.secrets["GEMINI_API_KEY"]
+else:
+   api_Key=st.secrets("GEMINI_API_KEY")
 genai.configure(api_key=api_Key)
 
 FILE_NAME = "chat_memory.json"
