@@ -3,40 +3,44 @@ import os
 from dotenv import load_dotenv
 import json
 import streamlit as st
-import time
 
 # --- INITIAL CONFIGURATION ---
 load_dotenv()
-#api_Key = os.getenv("GEMINI_API_KEY")
+
+# Fixed API Key Logic (Typo fix: api_Key vs api_key)
 if "GEMINI_API_KEY" in st.secrets:
-    api_key=st.secrets["GEMINI_API_KEY"]
+    api_key = st.secrets["GEMINI_API_KEY"]
 else:
-   api_Key=st.secrets("GEMINI_API_KEY")
+    api_key = os.getenv("GEMINI_API_KEY")
+
 genai.configure(api_key=api_key)
 
 FILE_NAME = "chat_memory.json"
 
-# --- EXISTING LOGIC ---
+# --- DATA PERSISTENCE ---
 def load_data():
     if os.path.exists(FILE_NAME):
-        if os.path.getsize(FILE_NAME) > 0:
+        try:
             with open(FILE_NAME, "r") as f:
                 return json.load(f)
+        except (json.JSONDecodeError, ValueError):
+            return []
     return []
 
 def save_data(chat_history):
     new_memory = []
     for message in chat_history:
+        # Gemini history object se text nikalne ka sahi tariqa
         message_text = message.parts[0].text
         new_memory.append({
             "role": message.role,
             "parts": [{"text": message_text}]
         })
-    with open(FILE_NAME, "w") as dairy:
-        json.dump(new_memory, dairy, indent=4)
+    with open(FILE_NAME, "w") as f: # 'dairy' ko 'f' kar diya consistent rakhne ke liye
+        json.dump(new_memory, f, indent=4)
 
 # --- INSTRUCTIONS ---
-instruction = """ Role & Persona
+instruction = """Role & Persona
 You are a highly intelligent, empathetic, and resource-conscious AI Food Assistant. Your primary goal is to help users manage their kitchen efficiently, minimize food waste, stay within budget, and provide delicious, safe recipes tailored to their specific needs.
 
 Core Responsibilities
@@ -68,7 +72,7 @@ STRICT FORMATTING RULE FOR INGREDIENTS:
 Whenever you provide a recipe or a shopping list, you MUST present the ingredients in a clean Markdown Table. Do not use simple bullet points for ingredients. Use this exact table structure:
 
 ### 🥗 [Recipe Name]
-**Description:** [Short description of the dish]
+*Description:* [Short description of the dish]
 
 ### 📝 Ingredients Table
 | Ingredient | Quantity | Estimated Price | Status / Note |
@@ -79,8 +83,8 @@ Whenever you provide a recipe or a shopping list, you MUST present the ingredien
 [Use numbered steps here]
 
 ### 💰 Budget & Waste Summary
-- **Total Estimated Cost:** [Total Price]
-- **Inventory Used:** [Mention which soon-to-expire items were saved]
+- *Total Estimated Cost:* [Total Price]
+- *Inventory Used:* [Mention which soon-to-expire items were saved]
 
 Example Interaction Workflow
 User: "I have spinach that expires tomorrow." -> Agent: Store "Spinach (Expiring Soon)" in memory.
@@ -88,64 +92,48 @@ User: "Suggest a dinner recipe." -> Agent: Suggest a "Creamy Spinach Pasta" or "
 User: "Give me a shopping list for 4 people on a tight budget." -> Agent: Generate table with quantities and cost-effective alternatives."""
 
 # --- STREAMLIT UI SETUP ---
-st.set_page_config(page_title="AI Food Agent", page_icon="🥗", layout="centered")
+st.set_page_config(page_title="AI Food Agent", page_icon="🥗")
 
-st.markdown("""
-    <style>
-    .stChatMessage { border-radius: 20px; padding: 10px; margin-bottom: 10px; }
-    .stSidebar { background-color: #f0f2f6; }
-    </style>
-""", unsafe_allow_html=True)
-
-# Initialize Model & Session State
+# Model aur Session Initialize karein
 if "model" not in st.session_state:
-    st.session_state.model = genai.GenerativeModel(model_name="gemini-2.5-flash-lite", system_instruction=instruction)
+    st.session_state.model = genai.GenerativeModel(
+        model_name="gemini-2.5-flash-lite",
+        system_instruction=instruction
+    )
+
+if "memory" not in st.session_state:
+    st.session_state.memory = load_data()
 
 if "chat_session" not in st.session_state:
-    st.session_state.memory = load_data()
     st.session_state.chat_session = st.session_state.model.start_chat(history=st.session_state.memory)
 
-# --- SIDEBAR WITH 2 BUTTONS ---
+# --- SIDEBAR ---
 with st.sidebar:
     st.markdown("## 👨‍🍳 **Food Agent AI**")
-    st.markdown(f"### Developed by: \n**Aiman Fatima**")
-    st.divider()
-
-    # BUTTON 1: Clear Interface Only
-    if st.button("🗑️ Clear Chat Window"):
-        st.session_state.chat_session = st.session_state.model.start_chat(history=st.session_state.memory)
-        st.rerun()
-
-    # BUTTON 2: Clear File History (Memory)
     if st.button("⚠️ Clear All History"):
         with open(FILE_NAME, "w") as f:
             json.dump([], f)
         st.session_state.memory = []
         st.session_state.chat_session = st.session_state.model.start_chat(history=[])
-        st.success("Memory Wiped!")
         st.rerun()
 
-# --- MAIN CHAT INTERFACE ---
+# --- MAIN CHAT ---
 st.title("🥗 Smart Food Assistant")
-st.caption("I help you cook with what you have & manage your budget.")
 
+# Display History
 for message in st.session_state.chat_session.history:
     role = "user" if message.role == "user" else "assistant"
-    avatar = "👤" if role == "user" else "🤖"
-    with st.chat_message(role, avatar=avatar):
+    with st.chat_message(role):
         st.markdown(message.parts[0].text)
 
-if user_input := st.chat_input("Ask me anything about food..."):
-    with st.chat_message("user", avatar="👤"):
+if user_input := st.chat_input("Ask me anything..."):
+    with st.chat_message("user"):
         st.markdown(user_input)
 
-    with st.chat_message("assistant", avatar="🤖"):
-        with st.status("Analyzing ingredients & history...", expanded=False) as status:
-            response = st.session_state.chat_session.send_message(user_input)
-            status.update(label="Response Ready!", state="complete", expanded=False)
+    with st.chat_message("assistant"):
+        response = st.session_state.chat_session.send_message(user_input)
         st.markdown(response.text)
         
+    # YAHAN IMPORTANTE HAI: 
+    # Response milte hi foran save karein aur session state update karein
     save_data(st.session_state.chat_session.history)
-    
-    if user_input.lower() in ['exit', 'bye']:
-        st.info("Progress saved. You can close the tab now!")
